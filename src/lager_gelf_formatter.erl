@@ -54,7 +54,7 @@ output({Prop,Default},Msg) when is_atom(Prop) ->
 output(Other,_) -> make_printable(Other).
 
 %% converts and formats a map into a list with keys and values, prefixes keys with name of original key
--spec convert_map(any() ,map()) -> iolist().
+-spec convert_map(term(), map()) -> iolist().
 convert_map(Key, M) ->
     Fun = fun(K, V, Acc) ->
         PrefixedKey = [Key, $_, make_printable(K)],
