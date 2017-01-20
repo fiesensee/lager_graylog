@@ -56,8 +56,20 @@ output(Other,_) -> make_printable(Other).
 %% converts and formats a map into a list with keys and values, prefixes keys with name of original key
 -spec convert_map(any() ,map()) -> iolist().
 convert_map(Key, M) ->
-    Fun = fun(K, V, Acc) -> lists:join("," ,[property([Key, $_, make_printable(K)], make_printable(V))] ++ Acc) end,
+    Fun = fun(K, V, Acc) ->
+        PrefixedKey = [Key, $_, make_printable(K)],
+        if
+            is_map(V) ->
+                E = convert_map(PrefixedKey, V);
+            true ->
+                E = [property(PrefixedKey, make_printable(V))]
+        end,
+        join_lists(E, Acc)
+    end,
     maps:fold(Fun, [], M).
+
+join_lists(L, []) -> L;
+join_lists(L, A) -> [L, $, , A].
 
 %% create string '"key": "value"' from key and value
 -spec property(string(), string()) -> string().
